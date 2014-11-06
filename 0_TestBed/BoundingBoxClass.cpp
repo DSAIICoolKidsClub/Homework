@@ -103,6 +103,58 @@ void BoundingBoxClass::SetOBBVisible(bool imVisible) { visibleOBB = imVisible; }
 String BoundingBoxClass::GetInstanceName(void){ return instance; }
 void BoundingBoxClass::CalculateBox(String theInstance)
 {
+	std::vector<vector3> vVertices = modelManager->GetVertices(theInstance);
+	int nVertices = static_cast<int>(vVertices.size());
+	
+	//If the size of the List is 0 it means we dont have any vertices in this Instance
+	//which means there is an error somewhere
+	if(nVertices == 0)
+		return;
+
+	vector3 minimum;
+	if(nVertices > 0)
+	{
+		//We assume the first vertex is the smallest one
+		minimum = vVertices[0];
+		//And iterate one by one
+		for(int nVertex = 1; nVertex < nVertices; nVertex++)
+		{
+			if(vVertices[nVertex].x < minimum.x)
+				minimum.x = vVertices[nVertex].x;
+
+			if(vVertices[nVertex].y < minimum.y)
+				minimum.y = vVertices[nVertex].y;
+
+			if(vVertices[nVertex].z < minimum.z)
+				minimum.z = vVertices[nVertex].z;
+		}
+	}
+	
+	//Go one by one on each component and realize which one is the largest one
+	vector3 maximum;
+	if(nVertices > 0)
+	{
+		//We assume the first vertex is the largest one
+		maximum = vVertices[0];
+		//And iterate one by one
+		for(int nVertex = 1; nVertex < nVertices; nVertex++)
+		{
+			if(vVertices[nVertex].x > maximum.x)
+				maximum.x = vVertices[nVertex].x;
+
+			if(vVertices[nVertex].y > maximum.y)
+				maximum.y = vVertices[nVertex].y;
+
+			if(vVertices[nVertex].z > maximum.z)
+				maximum.z = vVertices[nVertex].z;
+		}
+	}
+
+	centroidOBB = minimum + maximum;
+	centroidOBB /= 2.0f;
+
+	glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x),glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
+
 	return;
 }
 void BoundingBoxClass::Render( vector3 otherColor )

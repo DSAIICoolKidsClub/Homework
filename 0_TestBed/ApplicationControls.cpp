@@ -146,20 +146,20 @@ void ApplicationClass::ProcessKeyboard(void)
 	}
 	else if(bWasF6Pressed == true)//if its not currently pressed but it was pressed last...
 	{
-		//m_pBBMngr->RemoveBox("ALL");//remove all spheres (if there are none currently nothing bad is going to happen)
-		//for(int nInstance = 0; nInstance < m_pModelManager->GetNumberOfInstances(); nInstance++)//for all instances...
-		//{
-		//	String sInstance = m_pModelManager->GetInstanceName(nInstance);//Create spheres
-		//	m_pBBMngr->AddBox(sInstance);
-		//}
-		//m_pBBMngr->SetVisible(true, "ALL");//Make those spheres visible
+		m_pBBMngr->RemoveBox("ALL");//remove all spheres (if there are none currently nothing bad is going to happen)
+		for(int nInstance = 0; nInstance < m_pModelManager->GetNumberOfInstances(); nInstance++)//for all instances...
+		{
+			String sInstance = m_pModelManager->GetInstanceName(nInstance);//Create spheres
+			m_pBBMngr->AddBox(sInstance);
+		}
+		m_pBBMngr->SetVisible(true, "ALL");//Make those spheres visible
 		bWasF6Pressed = false;//reset the flag
 	}
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::F7))
 	{
 		m_pBSMngr->RemoveSphere("ALL");
-		//m_pBBMngr->RemoveBox("ALL");
+		m_pBBMngr->RemoveBox("ALL");
 	}
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::F8))
@@ -361,7 +361,7 @@ void ApplicationClass::ArcBall(float a_fSensitivity)
 	//m_pCamera0->Rotate(fVerticalAngle, fHorizontalAngle);
 	m_pModelManager->SetModelMatrix(arcball, m_sSelectedObject);
 	m_pBSMngr->SetModelMatrix(arcball, m_sSelectedObject);
-	//m_pBBMngr->SetModelMatrix(arcball, m_sSelectedObject);
+	m_pBBMngr->SetModelMatrix(arcball, m_sSelectedObject);
 	//m_pPrimitive->SetModelMatrix(arcball);
 }
 void ApplicationClass::CameraRotation(float a_fSpeed)
