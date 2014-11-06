@@ -8,9 +8,12 @@ using namespace MyEngine;
 class BoundingBoxClass
 {
 	String instance;
-	bool visible;
-	vector3 centroid;
-	vector3 color;
+	bool visibleOBB;
+	vector3 centroidOBB;
+	vector3 colorOBB;
+	bool visibleAABB;
+	vector3 centroidAABB;
+	vector3 colorAABB;
 	matrix4 modelToWorld;
 	PrimitiveWireClass* mesh;
 	ModelManagerClass* modelManager;
@@ -20,11 +23,17 @@ public:
 	BoundingBoxClass& operator=(BoundingBoxClass const& other);
 	~BoundingBoxClass(void);
 
-	bool GetVisible(void);
-	void SetVisible(bool a_bVisible);
+	bool GetOBBVisible(void);
+	void SetOBBVisible(bool imVisible);
 	/* Property:
 	GetVisible() or GetVisible()*/
-	__declspec(property(get = GetVisible, put = SetVisible)) bool Visible;
+	__declspec(property(get = GetOBBVisible, put = SetOBBVisible)) bool OBBVisible;
+
+	bool GetAABBVisible(void);
+	void SetAABBVisible(bool imVisible);
+	/* Property:
+	GetVisible() or GetVisible()*/
+	__declspec(property(get = GetAABBVisible, put = SetAABBVisible)) bool AABBVisible;
 
 	/* Gets the name of the model associated with this bounding box from model manager */
 	String GetInstanceName(void);
@@ -33,26 +42,40 @@ public:
 	__declspec(property(get = GetInstanceName)) String InstanceName;
 
 	/* Gets the centroid the bounding box */
-	vector3 GetCentroid(void);
+	vector3 GetOBBCentroid(void);
 	/* Property:
 	GetCentroid()*/
-	__declspec(property(get = GetCentroid)) vector3 Centroid;
+	__declspec(property(get = GetOBBCentroid)) vector3 OBBCentroid;
+
+	/* Gets the centroid the bounding box */
+	vector3 GetAABBCentroid(void);
+	/* Property:
+	GetCentroid()*/
+	__declspec(property(get = GetAABBCentroid)) vector3 AABBCentroid;
 
 	/* Gets the "ModelToWorld" matrix associated with the bounding box */
 	matrix4 GetModelMatrix(void);
 	/* Sets the "ModelToWorld" matrix associated with the bounding box */
-	void SetModelMatrix(matrix4 a_ModelMatrix);
+	void SetModelMatrix(matrix4 theModelMatrix);
 	/* "ModelToWorld"
 	GetModelMatrix() or SetModelMatrix() */
 	__declspec(property(get = GetModelMatrix, put = SetModelMatrix)) matrix4 ModelMatrix;
 
 	/* Gets the color vector of this bounding box (the default color in which is going to be rendered) */
-	vector3 GetColor(void);
+	vector3 GetOBBColor(void);
 	/* Sets the color vector of this bounding box (the default color in which is going to be rendered) */
-	void SetColor(vector3 a_v3Color);
+	void SetOBBColor(vector3 theColor);
 	/* Property:
 	GetColor() or SetColor() */
-	__declspec(property(get = GetColor, put = SetColor)) vector3 Color;
+	__declspec(property(get = GetOBBColor, put = SetOBBColor)) vector3 OBBColor;
+
+	/* Gets the color vector of this bounding box (the default color in which is going to be rendered) */
+	vector3 GetAABBColor(void);
+	/* Sets the color vector of this bounding box (the default color in which is going to be rendered) */
+	void SetAABBColor(vector3 theColor);
+	/* Property:
+	GetColor() or SetColor() */
+	__declspec(property(get = GetAABBColor, put = SetAABBColor)) vector3 AABBColor;
 
 	/* Renders the bounding box
 		Args:

@@ -49,14 +49,14 @@ void BoundingBoxManager::SetVisible(bool a_bVisible, String a_sInstance)
 		int numBox = GetNumberOfBoxes();
 		for(int nBox = 0; nBox < numBox; nBox++)
 		{
-			boundingBox[nBox]->SetVisible(a_bVisible);
+			boundingBox[nBox]->SetOBBVisible(a_bVisible);
 		}
 	}
 	else
 	{
 		int box = bModelMngr->IdentifyInstance(a_sInstance);
 		if(box < 0 || box < numBox)
-			boundingBox[box]->SetVisible(a_bVisible);
+			boundingBox[box]->SetOBBVisible(a_bVisible);
 	}
 }
 void BoundingBoxManager::SetColor(vector3 a_v3Color, String a_sInstance)
@@ -66,14 +66,14 @@ void BoundingBoxManager::SetColor(vector3 a_v3Color, String a_sInstance)
 		int nBoxs = GetNumberOfBoxes();
 		for(int nBox = 0; nBox < nBoxs; nBox++)
 		{
-			boundingBox[nBox]->SetColor(a_v3Color);
+			boundingBox[nBox]->SetOBBColor(a_v3Color);
 		}
 	}
 	else
 	{
 		int nBox = bModelMngr->IdentifyInstance(a_sInstance);
 		if(nBox < 0 || nBox < numBox)
-			boundingBox[nBox]->SetColor(a_v3Color);
+			boundingBox[nBox]->SetOBBColor(a_v3Color);
 	}
 }
 void BoundingBoxManager::SetModelMatrix(matrix4 a_mModelMatrix, String a_sInstance)
@@ -156,7 +156,7 @@ void BoundingBoxManager::Update(void)
 	bCollidingNames.clear();
 	for(int nBox = 0; nBox < numBox; nBox++)
 	{
-		boundingBox[nBox]->SetColor(MEWHITE);
+		boundingBox[nBox]->SetOBBColor(MEWHITE);
 	}
 	CollisionCheck();
 	CollisionResponse();
@@ -180,6 +180,6 @@ void BoundingBoxManager::CollisionResponse(void)
 	for(int nBox = 0; nBox < numBox; nBox++)
 	{
 		if(CheckForNameInList(boundingBox[nBox]->GetInstanceName()))
-			boundingBox[nBox]->SetColor(MERED);
+			boundingBox[nBox]->SetOBBColor(MERED);
 	}
 }
