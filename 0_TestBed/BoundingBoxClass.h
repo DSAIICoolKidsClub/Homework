@@ -17,6 +17,8 @@ class BoundingBoxClass
 	matrix4 modelToWorld;
 	PrimitiveWireClass* mesh;
 	ModelManagerClass* modelManager;
+	vector3 maximum;
+	vector3 minimum;
 public:
 	BoundingBoxClass(String theInstance);
 	BoundingBoxClass(BoundingBoxClass const& other);

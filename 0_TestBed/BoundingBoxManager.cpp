@@ -124,8 +124,8 @@ void BoundingBoxManager::RemoveBox(String a_sInstanceName)
 		//Clear the vector's element first otherwise there is a memory leak
 		for(int nBox = 0; nBox < numBox; nBox++)
 		{
-			BoundingBoxClass* pBS = boundingBox[nBox];
-			delete pBS;
+			BoundingBoxClass* pBB = boundingBox[nBox];
+			delete pBB;
 		}
 		boundingBox.clear();
 		numBox = 0;
@@ -143,8 +143,8 @@ void BoundingBoxManager::RemoveBox(String a_sInstanceName)
 			}
 			else
 			{
-				BoundingBoxClass* pBS = boundingBox[nBox];
-				delete pBS;
+				BoundingBoxClass* pBB = boundingBox[nBox];
+				delete pBB;
 			}
 		}
 	}

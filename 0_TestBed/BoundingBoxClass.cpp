@@ -26,8 +26,9 @@ BoundingBoxClass::BoundingBoxClass(String theInstance)
 	modelToWorld = modelManager->GetModelMatrix(instance);
 	//Crete a new Box and initialize it using the member variables
 	mesh = new PrimitiveWireClass();
-	mesh->GenerateCube(5, MEWHITE);
-	mesh->SetModelMatrix(glm::translate(modelToWorld, centroidOBB));
+	mesh->GenerateCube(1, MEWHITE);
+	matrix4 final = glm::translate(modelToWorld, centroidOBB) * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x),glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
+	mesh->SetModelMatrix(final);
 }
 BoundingBoxClass::BoundingBoxClass(BoundingBoxClass const& other)
 {
@@ -40,7 +41,8 @@ BoundingBoxClass::BoundingBoxClass(BoundingBoxClass const& other)
 
 	mesh = new PrimitiveWireClass();
 	mesh->GenerateCube(5, MEWHITE);
-	mesh->SetModelMatrix(glm::translate(modelToWorld, centroidOBB));
+	matrix4 final = glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x)  / 2 ,glm::distance(maximum.y,minimum.y)  / 2, glm::distance(maximum.z,minimum.z) / 2)) * glm::translate(modelToWorld, centroidOBB);
+	mesh->SetModelMatrix(final);
 }
 BoundingBoxClass& BoundingBoxClass::operator=(BoundingBoxClass const& other)
 {
@@ -58,7 +60,8 @@ BoundingBoxClass& BoundingBoxClass::operator=(BoundingBoxClass const& other)
 		
 		mesh = new PrimitiveWireClass();
 		mesh->GenerateCube(5, MEWHITE);
-		mesh->SetModelMatrix(glm::translate(modelToWorld, centroidOBB));
+		matrix4 final = glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x),glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z))) * glm::translate(modelToWorld, centroidOBB);
+		mesh->SetModelMatrix(final);
 	}
 	return *this;
 }
@@ -101,6 +104,7 @@ void BoundingBoxClass::SetModelMatrix(matrix4 theModelMatrix)
 bool BoundingBoxClass::GetOBBVisible(void) { return visibleOBB; }
 void BoundingBoxClass::SetOBBVisible(bool imVisible) { visibleOBB = imVisible; }
 String BoundingBoxClass::GetInstanceName(void){ return instance; }
+
 void BoundingBoxClass::CalculateBox(String theInstance)
 {
 	std::vector<vector3> vVertices = modelManager->GetVertices(theInstance);
@@ -111,7 +115,6 @@ void BoundingBoxClass::CalculateBox(String theInstance)
 	if(nVertices == 0)
 		return;
 
-	vector3 minimum;
 	if(nVertices > 0)
 	{
 		//We assume the first vertex is the smallest one
@@ -131,7 +134,6 @@ void BoundingBoxClass::CalculateBox(String theInstance)
 	}
 	
 	//Go one by one on each component and realize which one is the largest one
-	vector3 maximum;
 	if(nVertices > 0)
 	{
 		//We assume the first vertex is the largest one
@@ -161,7 +163,7 @@ void BoundingBoxClass::Render( vector3 otherColor )
 {
 	//If the shape is visible render it
 	//otherwise just return
-	if(visibleOBB)
+	if(!visibleOBB)
 		return;
 	//Calculate the color we want the shape to be
 	vector3 vColor;
