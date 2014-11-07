@@ -62,7 +62,7 @@ void ApplicationClass::ProcessKeyboard(void)
 		matrix4 matrix = glm::translate( matrix4(1.0f), vector3(-0.1f,0.0f,0.0f)) * m_pModelManager->GetModelMatrix(m_sSelectedObject);
 		m_pModelManager->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBSMngr->SetModelMatrix(matrix, m_sSelectedObject);
-		//m_pBBMngr->SetModelMatrix(matrix, m_sSelectedObject);
+		m_pBBMngr->SetModelMatrix(matrix, m_sSelectedObject);
 		
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
@@ -70,7 +70,7 @@ void ApplicationClass::ProcessKeyboard(void)
 		matrix4 matrix = glm::translate( matrix4(1.0f), vector3(0.1f,0.0f,0.0f)) * m_pModelManager->GetModelMatrix(m_sSelectedObject);
 		m_pModelManager->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBSMngr->SetModelMatrix(matrix, m_sSelectedObject);
-		//m_pBBMngr->SetModelMatrix(matrix, m_sSelectedObject);
+		m_pBBMngr->SetModelMatrix(matrix, m_sSelectedObject);
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
@@ -82,7 +82,7 @@ void ApplicationClass::ProcessKeyboard(void)
 		
 		m_pModelManager->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBSMngr->SetModelMatrix(matrix, m_sSelectedObject);
-		//m_pBBMngr->SetModelMatrix(matrix, m_sSelectedObject);
+		m_pBBMngr->SetModelMatrix(matrix, m_sSelectedObject);
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
@@ -94,7 +94,7 @@ void ApplicationClass::ProcessKeyboard(void)
 		
 		m_pModelManager->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBSMngr->SetModelMatrix(matrix, m_sSelectedObject);
-		//m_pBBMngr->SetModelMatrix(matrix, m_sSelectedObject);
+		m_pBBMngr->SetModelMatrix(matrix, m_sSelectedObject);
 	}
 #pragma endregion
 	//Model Loading

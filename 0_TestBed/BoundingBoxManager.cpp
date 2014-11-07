@@ -46,8 +46,8 @@ void BoundingBoxManager::SetVisible(bool a_bVisible, String a_sInstance)
 {
 	if(a_sInstance == "ALL")
 	{
-		int numBox = GetNumberOfBoxes();
-		for(int nBox = 0; nBox < numBox; nBox++)
+		int nBoxs = GetNumberOfBoxes();
+		for(int nBox = 0; nBox < nBoxs; nBox++)
 		{
 			boundingBox[nBox]->SetOBBVisible(a_bVisible);
 		}

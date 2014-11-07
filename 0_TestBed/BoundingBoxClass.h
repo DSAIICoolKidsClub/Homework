@@ -78,12 +78,12 @@ public:
 	/* Property:
 	GetColor() or SetColor() */
 	__declspec(property(get = GetAABBColor, put = SetAABBColor)) vector3 AABBColor;
-
 	/* Renders the bounding box
 		Args:
 			a_vColor -> determinate the color of the sphere to be rendered, if MEDEFAULT
 			it will render the shape in the constructed color (white) */
 	void Render( vector3 a_vColor = MEDEFAULT);
+
 
 private:
 	/* Released Memory and objects allocated. */

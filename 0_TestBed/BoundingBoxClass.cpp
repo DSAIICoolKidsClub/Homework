@@ -27,7 +27,7 @@ BoundingBoxClass::BoundingBoxClass(String theInstance)
 	//Crete a new Box and initialize it using the member variables
 	mesh = new PrimitiveWireClass();
 	mesh->GenerateCube(1, MEWHITE);
-	matrix4 final = glm::translate(modelToWorld, centroidOBB) * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x),glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
+	matrix4 final = glm::translate(modelToWorld, centroidOBB) * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x) ,glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
 	mesh->SetModelMatrix(final);
 }
 BoundingBoxClass::BoundingBoxClass(BoundingBoxClass const& other)
@@ -41,7 +41,7 @@ BoundingBoxClass::BoundingBoxClass(BoundingBoxClass const& other)
 
 	mesh = new PrimitiveWireClass();
 	mesh->GenerateCube(5, MEWHITE);
-	matrix4 final = glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x)  / 2 ,glm::distance(maximum.y,minimum.y)  / 2, glm::distance(maximum.z,minimum.z) / 2)) * glm::translate(modelToWorld, centroidOBB);
+	matrix4 final = glm::translate(modelToWorld, centroidOBB) * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x) ,glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
 	mesh->SetModelMatrix(final);
 }
 BoundingBoxClass& BoundingBoxClass::operator=(BoundingBoxClass const& other)
@@ -60,7 +60,7 @@ BoundingBoxClass& BoundingBoxClass::operator=(BoundingBoxClass const& other)
 		
 		mesh = new PrimitiveWireClass();
 		mesh->GenerateCube(5, MEWHITE);
-		matrix4 final = glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x),glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z))) * glm::translate(modelToWorld, centroidOBB);
+		matrix4 final = glm::translate(modelToWorld, centroidOBB) * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x) ,glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
 		mesh->SetModelMatrix(final);
 	}
 	return *this;
@@ -99,7 +99,7 @@ void BoundingBoxClass::SetModelMatrix(matrix4 theModelMatrix)
 	modelToWorld = theModelMatrix;
 	//Sets the Model Matrix of the actual Box shape
 	//(which is translated m_v3Centrod away from the origin of our Box)
-	mesh->SetModelMatrix(glm::translate(theModelMatrix, centroidOBB));
+	mesh->SetModelMatrix(glm::translate(theModelMatrix, centroidOBB) * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x),glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z))));
 }
 bool BoundingBoxClass::GetOBBVisible(void) { return visibleOBB; }
 void BoundingBoxClass::SetOBBVisible(bool imVisible) { visibleOBB = imVisible; }
@@ -155,7 +155,7 @@ void BoundingBoxClass::CalculateBox(String theInstance)
 	centroidOBB = minimum + maximum;
 	centroidOBB /= 2.0f;
 
-	glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x),glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
+	//glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x),glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
 
 	return;
 }
