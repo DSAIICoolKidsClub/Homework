@@ -65,6 +65,21 @@ BoundingBoxClass& BoundingBoxClass::operator=(BoundingBoxClass const& other)
 	}
 	return *this;
 }
+
+std::vector<vector3> BoundingBoxClass::getVertices()
+{
+	vertices.push_back(vector3(maximum.x, minimum.y, maximum.z));
+	vertices.push_back(vector3(minimum.x, minimum.y, maximum.z));
+	vertices.push_back(vector3(minimum.x, maximum.y, maximum.z));
+	vertices.push_back(vector3(maximum.x, maximum.y, maximum.z));
+	vertices.push_back(vector3(maximum.x, minimum.y, minimum.z));
+	vertices.push_back(vector3(minimum.x, minimum.y, minimum.z));
+	vertices.push_back(vector3(minimum.x, maximum.y, minimum.z));
+	vertices.push_back(vector3(maximum.x, maximum.y, minimum.z));
+
+	return vertices;
+}
+
 BoundingBoxClass::~BoundingBoxClass(void)
 {
 	//Destroying the object requires releasing all the allocated memory first
@@ -104,6 +119,8 @@ void BoundingBoxClass::SetModelMatrix(matrix4 theModelMatrix)
 bool BoundingBoxClass::GetOBBVisible(void) { return visibleOBB; }
 void BoundingBoxClass::SetOBBVisible(bool imVisible) { visibleOBB = imVisible; }
 String BoundingBoxClass::GetInstanceName(void){ return instance; }
+vector3 BoundingBoxClass::GetMinimum(void){ return minimum; };
+vector3 BoundingBoxClass::GetMaximum(void){ return maximum; };
 
 void BoundingBoxClass::CalculateBox(String theInstance)
 {

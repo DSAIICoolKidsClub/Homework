@@ -19,10 +19,13 @@ class BoundingBoxClass
 	ModelManagerClass* modelManager;
 	vector3 maximum;
 	vector3 minimum;
+	std::vector<vector3> vertices;
+
 public:
 	BoundingBoxClass(String theInstance);
 	BoundingBoxClass(BoundingBoxClass const& other);
 	BoundingBoxClass& operator=(BoundingBoxClass const& other);
+	std::vector<vector3> getVertices();
 	~BoundingBoxClass(void);
 
 	bool GetOBBVisible(void);
@@ -42,6 +45,10 @@ public:
 	/* Property:
 	GetInstanceName()*/
 	__declspec(property(get = GetInstanceName)) String InstanceName;
+	// gets the minimum points of the box
+	vector3 GetMinimum(void);
+	// get the maximum points of box
+	vector3 GetMaximum(void);
 
 	/* Gets the centroid the bounding box */
 	vector3 GetOBBCentroid(void);

@@ -163,7 +163,37 @@ void BoundingBoxManager::Update(void)
 }
 void BoundingBoxManager::CollisionCheck(void)
 {
-	
+	for(int i = 0; i < numBox; i++)
+	{
+		for(int j = 0; j < numBox; j++)
+		{
+			if(i != j)
+			{
+				matrix4  mat1 = boundingBox[i]->GetModelMatrix();
+				vector3 maximum1 = boundingBox[i]->GetMaximum();
+				vector3 minimum1 = boundingBox[i]->GetMinimum();
+				vector3 newmax1 = static_cast<vector3>(glm::translate(mat1,maximum1) * vector4(0.0f,0.0f,0.0f, 1.0f));
+				vector3 newmin1 = static_cast<vector3>(glm::translate(mat1,minimum1) * vector4(0.0f,0.0f,0.0f, 1.0f));
+
+				matrix4  mat2 = boundingBox[j]->GetModelMatrix();
+				vector3 maximum2 = boundingBox[j]->GetMaximum();
+				vector3 minimum2 = boundingBox[j]->GetMinimum();
+				vector3 newmax2 = static_cast<vector3>(glm::translate(mat2,maximum2) * vector4(0.0f,0.0f,0.0f, 1.0f));
+				vector3 newmin2 = static_cast<vector3>(glm::translate(mat2,minimum2) * vector4(0.0f,0.0f,0.0f, 1.0f));
+				std::cout<< boundingBox[i]->GetInstanceName() << " Min1: " << newmin1.x << std::endl;
+				std::cout<< boundingBox[i]->GetInstanceName() << " Max1: " << newmax1.x << std::endl;
+				std::cout<< boundingBox[j]->GetInstanceName() << " Min2: " << newmin2.x << std::endl;
+				std::cout<< boundingBox[j]->GetInstanceName() << " Max2: " << newmax2.x << std::endl;
+				if((newmax1.y > newmin2.y && newmin1.y < newmax2.y) && (newmax1.z > newmin2.z && newmin1.z < newmax2.z) && (newmax1.x > newmin2.x && newmin1.x < newmax2.x))
+				{
+					bCollidingNames.push_back(boundingBox[i]->GetInstanceName());
+					bCollidingNames.push_back(boundingBox[j]->GetInstanceName());
+					std::cout<< "true" << std::endl;
+				}
+			}
+		}
+	}
+
 }
 bool BoundingBoxManager::CheckForNameInList(String a_sName)
 {
