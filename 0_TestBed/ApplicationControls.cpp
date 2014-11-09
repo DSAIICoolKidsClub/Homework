@@ -60,10 +60,11 @@ void ApplicationClass::ProcessKeyboard(void)
 	{
 		//matrix4 matrix = glm::translate( m_pModelManager->GetModelMatrix(m_sSelectedObject), vector3(-0.1f,0.0f,0.0f));
 		matrix4 matrix = glm::translate( matrix4(1.0f), vector3(-0.1f,0.0f,0.0f)) * m_pModelManager->GetModelMatrix(m_sSelectedObject);
+		matrix4 matrix2 = glm::translate( matrix4(1.0f), vector3(-0.1f,0.0f,0.0f)) * m_pModelManager->GetModelMatrix(m_sSelectedObject);
 		m_pModelManager->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBSMngr->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBBMngr->SetModelMatrix(matrix, m_sSelectedObject);
-		m_pBBMngr->SetaaModelMatrix(matrix, m_sSelectedObject);
+		m_pBBMngr->SetaaModelMatrix(matrix4(1.0f), m_sSelectedObject);
 		
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
@@ -72,7 +73,7 @@ void ApplicationClass::ProcessKeyboard(void)
 		m_pModelManager->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBSMngr->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBBMngr->SetModelMatrix(matrix, m_sSelectedObject);
-		m_pBBMngr->SetaaModelMatrix(matrix, m_sSelectedObject);
+		m_pBBMngr->SetaaModelMatrix(matrix4(1.0f), m_sSelectedObject);
 
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
@@ -86,7 +87,7 @@ void ApplicationClass::ProcessKeyboard(void)
 		m_pModelManager->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBSMngr->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBBMngr->SetModelMatrix(matrix, m_sSelectedObject);
-		m_pBBMngr->SetaaModelMatrix(matrix, m_sSelectedObject);
+		m_pBBMngr->SetaaModelMatrix(matrix4(1.0f), m_sSelectedObject);
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
@@ -99,7 +100,7 @@ void ApplicationClass::ProcessKeyboard(void)
 		m_pModelManager->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBSMngr->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBBMngr->SetModelMatrix(matrix, m_sSelectedObject);
-		m_pBBMngr->SetaaModelMatrix(matrix, m_sSelectedObject);
+		m_pBBMngr->SetaaModelMatrix(matrix4(1.0f), m_sSelectedObject);
 	}
 #pragma endregion
 	//Model Loading
@@ -362,12 +363,12 @@ void ApplicationClass::ArcBall(float a_fSensitivity)
 		DeltaMouse = static_cast<float>(MouseY - CenterY);
 		arcball = glm::rotate(arcball, -a_fSensitivity * DeltaMouse, vector3(1.0f, 0.0f, 0.0f));
 	}
-
+	matrix4 aaMatrix = arcball;
 	//m_pCamera0->Rotate(fVerticalAngle, fHorizontalAngle);
 	m_pModelManager->SetModelMatrix(arcball, m_sSelectedObject);
 	m_pBSMngr->SetModelMatrix(arcball, m_sSelectedObject);
 	m_pBBMngr->SetModelMatrix(arcball, m_sSelectedObject);
-	m_pBBMngr->SetaaModelMatrix(arcball, m_sSelectedObject);
+	m_pBBMngr->SetaaModelMatrix(aaMatrix, m_sSelectedObject);
 	//m_pPrimitive->SetModelMatrix(arcball);
 }
 void ApplicationClass::CameraRotation(float a_fSpeed)

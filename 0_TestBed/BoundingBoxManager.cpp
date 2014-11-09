@@ -112,7 +112,14 @@ void BoundingBoxManager::SetaaModelMatrix(matrix4 a_mModelMatrix, String a_sInst
 		for(int nBox = 0; nBox < nBoxs; nBox++)
 		{
 			std::vector<vector3> verts = boundingBox[nBox]->getVertices();
-			aaboundingBox[nBox]->SetAAModelMatrix(a_mModelMatrix, verts);
+			std::vector<vector3> worldVerts;
+			int nVertices = static_cast<int>(verts.size());
+			for (int i = 0; i < nVertices; i++)
+			{
+				vector3 worldVec = static_cast<vector3>(glm::translate(a_mModelMatrix,verts[i]) * vector4(0.0f,0.0f,0.0f, 1.0f));
+				worldVerts.push_back(worldVec);
+			}
+			aaboundingBox[nBox]->SetAAModelMatrix(boundingBox[nBox]->GetModelMatrix(), worldVerts);
 		}
 	}
 	else
@@ -121,7 +128,14 @@ void BoundingBoxManager::SetaaModelMatrix(matrix4 a_mModelMatrix, String a_sInst
 		if(nBox < 0 || nBox < numBox)
 		{
 			std::vector<vector3> verts = boundingBox[nBox]->getVertices();
-			aaboundingBox[nBox]->SetAAModelMatrix(a_mModelMatrix, verts);
+			std::vector<vector3> worldVerts;
+			int nVertices = static_cast<int>(verts.size());
+			for (int i = 0; i < nVertices; i++)
+			{
+				vector3 worldVec = static_cast<vector3>(glm::translate(a_mModelMatrix,verts[i]) * vector4(0.0f,0.0f,0.0f, 1.0f));
+				worldVerts.push_back(worldVec);
+			}
+			aaboundingBox[nBox]->SetAAModelMatrix(boundingBox[nBox]->GetModelMatrix(), worldVerts);
 		}
 	}
 }
@@ -151,7 +165,7 @@ void BoundingBoxManager::Render(String a_sInstance)
 void BoundingBoxManager::AddBox(String a_sInstanceName)
 {
 	BoundingBoxClass* oBox = new BoundingBoxClass(a_sInstanceName);
-	BoundingBoxClass* aaBox = new BoundingBoxClass(oBox->getVertices(), a_sInstanceName);
+	BoundingBoxClass* aaBox = new BoundingBoxClass(oBox->getVertices(), oBox->GetInstanceName());
 	boundingBox.push_back(oBox);
 	aaboundingBox.push_back(aaBox);
 

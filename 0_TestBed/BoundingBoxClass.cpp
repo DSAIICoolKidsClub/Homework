@@ -150,17 +150,17 @@ void BoundingBoxClass::SetAAModelMatrix(matrix4 theModelMatrix, std::vector<vect
 {
 	//Sets the model matrix of the Box
 	modelToWorld = theModelMatrix;
-	std::vector<vector3> worldVerts;
-	int nVertices = static_cast<int>(other.size());
-	for (int i = 0; i < nVertices; i++)
-	{
-		vector3 worldVec = static_cast<vector3>(glm::translate(modelToWorld,other[i]) * vector4(0.0f,0.0f,0.0f, 1.0f));
-		worldVerts.push_back(worldVec);
-	}
-	CalculateaaBox(worldVerts);
+	//std::vector<vector3> worldVerts;
+	//int nVertices = static_cast<int>(other.size());
+	//for (int i = 0; i < nVertices; i++)
+	//{
+	//	vector3 worldVec = static_cast<vector3>(glm::translate(modelToWorld,other[i]) * vector4(0.0f,0.0f,0.0f, 1.0f));
+	//	worldVerts.push_back(worldVec);
+	//}
+	CalculateaaBox(other);
 	//Sets the Model Matrix of the actual Box shape
 	//(which is translated m_v3Centrod away from the origin of our Box)
-	mesh->SetModelMatrix(glm::translate(theModelMatrix, centroidOBB) / 2 * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x),glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z))));
+	mesh->SetModelMatrix(glm::translate(theModelMatrix, centroidOBB)  * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x),glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z))));
 }
 bool BoundingBoxClass::GetOBBVisible(void) { return visibleOBB; }
 void BoundingBoxClass::SetOBBVisible(bool imVisible) { visibleOBB = imVisible; }
@@ -266,8 +266,6 @@ void BoundingBoxClass::CalculateaaBox(std::vector<vector3> other)
 
 	centroidOBB = minimum + maximum;
 	centroidOBB /= 2.0f;
-
-	//glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x),glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
 
 	return;
 }
