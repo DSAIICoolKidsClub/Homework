@@ -24,6 +24,7 @@ class BoundingBoxClass
 public:
 	BoundingBoxClass(String theInstance);
 	BoundingBoxClass(BoundingBoxClass const& other);
+	BoundingBoxClass(std::vector<vector3> other, String theInstance);
 	BoundingBoxClass& operator=(BoundingBoxClass const& other);
 	std::vector<vector3> getVertices();
 	~BoundingBoxClass(void);
@@ -99,6 +100,7 @@ private:
 	Args:
 		a_sInstance: The name of the instance for which the bounding sphere is going to be calculated */
 	void CalculateBox(String theInstance);
+	void CalculateaaBox(std::vector<vector3> other);
 };
 
 #endif

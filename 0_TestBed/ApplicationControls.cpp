@@ -63,6 +63,7 @@ void ApplicationClass::ProcessKeyboard(void)
 		m_pModelManager->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBSMngr->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBBMngr->SetModelMatrix(matrix, m_sSelectedObject);
+		m_pBBMngr->SetaaModelMatrix(matrix, m_sSelectedObject);
 		
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
@@ -71,6 +72,8 @@ void ApplicationClass::ProcessKeyboard(void)
 		m_pModelManager->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBSMngr->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBBMngr->SetModelMatrix(matrix, m_sSelectedObject);
+		m_pBBMngr->SetaaModelMatrix(matrix, m_sSelectedObject);
+
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
@@ -83,6 +86,7 @@ void ApplicationClass::ProcessKeyboard(void)
 		m_pModelManager->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBSMngr->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBBMngr->SetModelMatrix(matrix, m_sSelectedObject);
+		m_pBBMngr->SetaaModelMatrix(matrix, m_sSelectedObject);
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
@@ -95,6 +99,7 @@ void ApplicationClass::ProcessKeyboard(void)
 		m_pModelManager->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBSMngr->SetModelMatrix(matrix, m_sSelectedObject);
 		m_pBBMngr->SetModelMatrix(matrix, m_sSelectedObject);
+		m_pBBMngr->SetaaModelMatrix(matrix, m_sSelectedObject);
 	}
 #pragma endregion
 	//Model Loading
@@ -362,6 +367,7 @@ void ApplicationClass::ArcBall(float a_fSensitivity)
 	m_pModelManager->SetModelMatrix(arcball, m_sSelectedObject);
 	m_pBSMngr->SetModelMatrix(arcball, m_sSelectedObject);
 	m_pBBMngr->SetModelMatrix(arcball, m_sSelectedObject);
+	m_pBBMngr->SetaaModelMatrix(arcball, m_sSelectedObject);
 	//m_pPrimitive->SetModelMatrix(arcball);
 }
 void ApplicationClass::CameraRotation(float a_fSpeed)

@@ -50,13 +50,17 @@ void BoundingBoxManager::SetVisible(bool a_bVisible, String a_sInstance)
 		for(int nBox = 0; nBox < nBoxs; nBox++)
 		{
 			boundingBox[nBox]->SetOBBVisible(a_bVisible);
+			aaboundingBox[nBox]->SetOBBVisible(a_bVisible);
 		}
 	}
 	else
 	{
 		int box = bModelMngr->IdentifyInstance(a_sInstance);
 		if(box < 0 || box < numBox)
+		{
 			boundingBox[box]->SetOBBVisible(a_bVisible);
+			aaboundingBox[box]->SetOBBVisible(a_bVisible);
+		}
 	}
 }
 void BoundingBoxManager::SetColor(vector3 a_v3Color, String a_sInstance)
@@ -67,13 +71,17 @@ void BoundingBoxManager::SetColor(vector3 a_v3Color, String a_sInstance)
 		for(int nBox = 0; nBox < nBoxs; nBox++)
 		{
 			boundingBox[nBox]->SetOBBColor(a_v3Color);
+			aaboundingBox[nBox]->SetOBBColor(a_v3Color);
 		}
 	}
 	else
 	{
 		int nBox = bModelMngr->IdentifyInstance(a_sInstance);
 		if(nBox < 0 || nBox < numBox)
+		{
 			boundingBox[nBox]->SetOBBColor(a_v3Color);
+			aaboundingBox[nBox]->SetOBBColor(a_v3Color);
+		}
 	}
 }
 void BoundingBoxManager::SetModelMatrix(matrix4 a_mModelMatrix, String a_sInstance)
@@ -90,9 +98,31 @@ void BoundingBoxManager::SetModelMatrix(matrix4 a_mModelMatrix, String a_sInstan
 	{
 		int nBox = bModelMngr->IdentifyInstance(a_sInstance);
 		if(nBox < 0 || nBox < numBox)
+		{
 			boundingBox[nBox]->SetModelMatrix(a_mModelMatrix);
+		}
 	}
 }
+
+void BoundingBoxManager::SetaaModelMatrix(matrix4 a_mModelMatrix, String a_sInstance)
+{
+	if(a_sInstance == "ALL")
+	{
+		int nBoxs = GetNumberOfBoxes();for(int nBox = 0; nBox < nBoxs; nBox++)
+		{
+			aaboundingBox[nBox]->SetModelMatrix(a_mModelMatrix);
+		}
+	}
+	else
+	{
+		int nBox = bModelMngr->IdentifyInstance(a_sInstance);
+		if(nBox < 0 || nBox < numBox)
+		{
+			aaboundingBox[nBox]->SetModelMatrix(a_mModelMatrix);
+		}
+	}
+}
+
 void BoundingBoxManager::Render(String a_sInstance)
 {
 	
@@ -102,19 +132,26 @@ void BoundingBoxManager::Render(String a_sInstance)
 		for(int nBox = 0; nBox < nBoxs; nBox++)
 		{
 			boundingBox[nBox]->Render(MEDEFAULT);
+			aaboundingBox[nBox]->Render(MEDEFAULT);
 		}
 	}
 	else
 	{
 		int nBox = bModelMngr->IdentifyInstance(a_sInstance);
 		if(nBox < 0 || nBox < numBox)
+		{
 			boundingBox[nBox]->Render(MEDEFAULT);
+			aaboundingBox[nBox]->Render(MEDEFAULT);
+		}
 	}
 }
 void BoundingBoxManager::AddBox(String a_sInstanceName)
 {
 	BoundingBoxClass* oBox = new BoundingBoxClass(a_sInstanceName);
+	BoundingBoxClass* aaBox = new BoundingBoxClass(oBox->getVertices(), a_sInstanceName);
 	boundingBox.push_back(oBox);
+	aaboundingBox.push_back(aaBox);
+
 	numBox ++;
 }
 void BoundingBoxManager::RemoveBox(String a_sInstanceName)
@@ -125,13 +162,17 @@ void BoundingBoxManager::RemoveBox(String a_sInstanceName)
 		for(int nBox = 0; nBox < numBox; nBox++)
 		{
 			BoundingBoxClass* pBB = boundingBox[nBox];
+			BoundingBoxClass* aapBB = aaboundingBox[nBox];
 			delete pBB;
+			delete aapBB;
 		}
 		boundingBox.clear();
+		aaboundingBox.clear();
 		numBox = 0;
 		return;
 	}
 	std::vector<BoundingBoxClass*> vTemp;
+	std::vector<BoundingBoxClass*> aaTemp;
 	int nBox = bModelMngr->IdentifyInstance(a_sInstanceName);
 	if(nBox < 0 || nBox < numBox)
 	{
@@ -140,15 +181,19 @@ void BoundingBoxManager::RemoveBox(String a_sInstanceName)
 			if(nBox != nBox)
 			{
 				vTemp.push_back(boundingBox[nBox]);
+				aaTemp.push_back(aaboundingBox[nBox]);
 			}
 			else
 			{
 				BoundingBoxClass* pBB = boundingBox[nBox];
+				BoundingBoxClass* aapBB = aaboundingBox[nBox];
 				delete pBB;
+				delete aapBB;
 			}
 		}
 	}
 	boundingBox = vTemp;
+	aaboundingBox = aaTemp;
 	numBox++;
 }
 void BoundingBoxManager::Update(void)
@@ -157,6 +202,7 @@ void BoundingBoxManager::Update(void)
 	for(int nBox = 0; nBox < numBox; nBox++)
 	{
 		boundingBox[nBox]->SetOBBColor(MEWHITE);
+		aaboundingBox[nBox]->SetOBBColor(MEWHITE);
 	}
 	CollisionCheck();
 	CollisionResponse();
@@ -180,15 +226,14 @@ void BoundingBoxManager::CollisionCheck(void)
 				vector3 minimum2 = boundingBox[j]->GetMinimum();
 				vector3 newmax2 = static_cast<vector3>(glm::translate(mat2,maximum2) * vector4(0.0f,0.0f,0.0f, 1.0f));
 				vector3 newmin2 = static_cast<vector3>(glm::translate(mat2,minimum2) * vector4(0.0f,0.0f,0.0f, 1.0f));
-				std::cout<< boundingBox[i]->GetInstanceName() << " Min1: " << newmin1.x << std::endl;
+				/*std::cout<< boundingBox[i]->GetInstanceName() << " Min1: " << newmin1.x << std::endl;
 				std::cout<< boundingBox[i]->GetInstanceName() << " Max1: " << newmax1.x << std::endl;
 				std::cout<< boundingBox[j]->GetInstanceName() << " Min2: " << newmin2.x << std::endl;
-				std::cout<< boundingBox[j]->GetInstanceName() << " Max2: " << newmax2.x << std::endl;
+				std::cout<< boundingBox[j]->GetInstanceName() << " Max2: " << newmax2.x << std::endl;*/
 				if((newmax1.y > newmin2.y && newmin1.y < newmax2.y) && (newmax1.z > newmin2.z && newmin1.z < newmax2.z) && (newmax1.x > newmin2.x && newmin1.x < newmax2.x))
 				{
 					bCollidingNames.push_back(boundingBox[i]->GetInstanceName());
 					bCollidingNames.push_back(boundingBox[j]->GetInstanceName());
-					std::cout<< "true" << std::endl;
 				}
 			}
 		}
@@ -210,6 +255,9 @@ void BoundingBoxManager::CollisionResponse(void)
 	for(int nBox = 0; nBox < numBox; nBox++)
 	{
 		if(CheckForNameInList(boundingBox[nBox]->GetInstanceName()))
+		{
 			boundingBox[nBox]->SetOBBColor(MERED);
+			aaboundingBox[nBox]->SetOBBColor(MERED);
+		}
 	}
 }

@@ -11,6 +11,7 @@ class BoundingBoxManager
 {
 	int numBox;
 	std::vector<BoundingBoxClass*> boundingBox;
+	std::vector<BoundingBoxClass*> aaboundingBox;
 	ModelManagerClass* bModelMngr;
 	std::vector<String> bCollidingNames;
 public:
@@ -37,6 +38,7 @@ public:
 		a_mModelMatrix matrix4 that contains the space provided
 		a_sInstanceName identify the shape if ALL is provided then it applies to all shapes*/
 	void SetModelMatrix(matrix4 bModelMatrix, String bInstanceName = "ALL");
+	void SetaaModelMatrix(matrix4 bModelMatrix, String bInstanceName = "ALL");
 
 	/*Render the specified shape
 	Arguments:

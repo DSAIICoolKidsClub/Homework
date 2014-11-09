@@ -44,6 +44,36 @@ BoundingBoxClass::BoundingBoxClass(BoundingBoxClass const& other)
 	matrix4 final = glm::translate(modelToWorld, centroidOBB) * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x) ,glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
 	mesh->SetModelMatrix(final);
 }
+
+BoundingBoxClass::BoundingBoxClass(std::vector<vector3> other, String theInstance)
+{
+	mesh = nullptr;
+	centroidOBB = vector3(0.0f,0.0f,0.0f);
+	colorOBB = MEGREEN;
+	modelToWorld = matrix4(1.0f);
+	visibleOBB = false;
+
+	modelManager = ModelManagerClass::GetInstance();
+	instance = theInstance;
+	//Identify the instance from the list inside of the Model Manager
+	int nInstance = modelManager->IdentifyInstance(instance);
+	//If there is no instance with that name the Identify Instance will return -1
+	//In which case there is nothing to do here so we just return without allocating memory
+	if(nInstance == -1)
+		return;
+
+	//Construct a box with the dimensions of the instance, they will be allocated in the
+	//corresponding member variables inside the method
+	CalculateaaBox(other);
+	//Get the Model to World matrix associated with the Instance
+	modelToWorld = modelManager->GetModelMatrix(instance);
+	//Crete a new Box and initialize it using the member variables
+	mesh = new PrimitiveWireClass();
+	mesh->GenerateCube(1, colorOBB);
+	matrix4 final = glm::translate(modelToWorld, centroidOBB) * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x) ,glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
+	mesh->SetModelMatrix(final);
+}
+
 BoundingBoxClass& BoundingBoxClass::operator=(BoundingBoxClass const& other)
 {
 	//If the incoming instance is the same as the current there is nothing to do here
@@ -176,6 +206,59 @@ void BoundingBoxClass::CalculateBox(String theInstance)
 
 	return;
 }
+
+void BoundingBoxClass::CalculateaaBox(std::vector<vector3> other)
+{
+	int nVertices = static_cast<int>(other.size());
+
+	if(nVertices == 0)
+		return;
+
+	if(nVertices > 0)
+	{
+		//We assume the first vertex is the smallest one
+		minimum = other[0];
+		//And iterate one by one
+		for(int nVertex = 1; nVertex < nVertices; nVertex++)
+		{
+			if(other[nVertex].x < minimum.x)
+				minimum.x = other[nVertex].x;
+
+			if(other[nVertex].y < minimum.y)
+				minimum.y = other[nVertex].y;
+
+			if(other[nVertex].z < minimum.z)
+				minimum.z = other[nVertex].z;
+		}
+	}
+	
+	//Go one by one on each component and realize which one is the largest one
+	if(nVertices > 0)
+	{
+		//We assume the first vertex is the largest one
+		maximum = other[0];
+		//And iterate one by one
+		for(int nVertex = 1; nVertex < nVertices; nVertex++)
+		{
+			if(other[nVertex].x > maximum.x)
+				maximum.x = other[nVertex].x;
+
+			if(other[nVertex].y > maximum.y)
+				maximum.y = other[nVertex].y;
+
+			if(other[nVertex].z > maximum.z)
+				maximum.z = other[nVertex].z;
+		}
+	}
+
+	centroidOBB = minimum + maximum;
+	centroidOBB /= 2.0f;
+
+	//glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x),glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
+
+	return;
+}
+
 void BoundingBoxClass::Render( vector3 otherColor )
 {
 	//If the shape is visible render it
