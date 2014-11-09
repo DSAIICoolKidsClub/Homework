@@ -67,6 +67,7 @@ public:
 	matrix4 GetModelMatrix(void);
 	/* Sets the "ModelToWorld" matrix associated with the bounding box */
 	void SetModelMatrix(matrix4 theModelMatrix);
+	void SetAAModelMatrix(matrix4 theModelMatrix, std::vector<vector3> other);
 	/* "ModelToWorld"
 	GetModelMatrix() or SetModelMatrix() */
 	__declspec(property(get = GetModelMatrix, put = SetModelMatrix)) matrix4 ModelMatrix;

@@ -32,7 +32,7 @@ public:
 	Arguments:
 		a_v3Color sets the color of the shape to be drawn
 		a_sInstanceName identify the shape if ALL is provided then it applies to all shapes*/
-	void SetColor(vector3 bv3Color, String bInstanceName = "ALL");
+	void SetColor(vector3 bv3Color, vector3 cv3Color, String bInstanceName = "ALL");
 	/*Sets the Model matrix to the object and the shape
 	Arguments:
 		a_mModelMatrix matrix4 that contains the space provided

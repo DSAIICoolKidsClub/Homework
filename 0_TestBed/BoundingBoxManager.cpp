@@ -63,7 +63,7 @@ void BoundingBoxManager::SetVisible(bool a_bVisible, String a_sInstance)
 		}
 	}
 }
-void BoundingBoxManager::SetColor(vector3 a_v3Color, String a_sInstance)
+void BoundingBoxManager::SetColor(vector3 a_v3Color, vector3 b_v3Color, String a_sInstance)
 {
 	if(a_sInstance == "ALL")
 	{
@@ -71,7 +71,7 @@ void BoundingBoxManager::SetColor(vector3 a_v3Color, String a_sInstance)
 		for(int nBox = 0; nBox < nBoxs; nBox++)
 		{
 			boundingBox[nBox]->SetOBBColor(a_v3Color);
-			aaboundingBox[nBox]->SetOBBColor(a_v3Color);
+			aaboundingBox[nBox]->SetOBBColor(b_v3Color);
 		}
 	}
 	else
@@ -80,7 +80,7 @@ void BoundingBoxManager::SetColor(vector3 a_v3Color, String a_sInstance)
 		if(nBox < 0 || nBox < numBox)
 		{
 			boundingBox[nBox]->SetOBBColor(a_v3Color);
-			aaboundingBox[nBox]->SetOBBColor(a_v3Color);
+			aaboundingBox[nBox]->SetOBBColor(b_v3Color);
 		}
 	}
 }
@@ -108,9 +108,11 @@ void BoundingBoxManager::SetaaModelMatrix(matrix4 a_mModelMatrix, String a_sInst
 {
 	if(a_sInstance == "ALL")
 	{
-		int nBoxs = GetNumberOfBoxes();for(int nBox = 0; nBox < nBoxs; nBox++)
+		int nBoxs = GetNumberOfBoxes();
+		for(int nBox = 0; nBox < nBoxs; nBox++)
 		{
-			aaboundingBox[nBox]->SetModelMatrix(a_mModelMatrix);
+			std::vector<vector3> verts = boundingBox[nBox]->getVertices();
+			aaboundingBox[nBox]->SetAAModelMatrix(a_mModelMatrix, verts);
 		}
 	}
 	else
@@ -118,7 +120,8 @@ void BoundingBoxManager::SetaaModelMatrix(matrix4 a_mModelMatrix, String a_sInst
 		int nBox = bModelMngr->IdentifyInstance(a_sInstance);
 		if(nBox < 0 || nBox < numBox)
 		{
-			aaboundingBox[nBox]->SetModelMatrix(a_mModelMatrix);
+			std::vector<vector3> verts = boundingBox[nBox]->getVertices();
+			aaboundingBox[nBox]->SetAAModelMatrix(a_mModelMatrix, verts);
 		}
 	}
 }
@@ -202,7 +205,7 @@ void BoundingBoxManager::Update(void)
 	for(int nBox = 0; nBox < numBox; nBox++)
 	{
 		boundingBox[nBox]->SetOBBColor(MEWHITE);
-		aaboundingBox[nBox]->SetOBBColor(MEWHITE);
+		aaboundingBox[nBox]->SetOBBColor(MEGREEN);
 	}
 	CollisionCheck();
 	CollisionResponse();
@@ -215,15 +218,15 @@ void BoundingBoxManager::CollisionCheck(void)
 		{
 			if(i != j)
 			{
-				matrix4  mat1 = boundingBox[i]->GetModelMatrix();
-				vector3 maximum1 = boundingBox[i]->GetMaximum();
-				vector3 minimum1 = boundingBox[i]->GetMinimum();
+				matrix4  mat1 = aaboundingBox[i]->GetModelMatrix();
+				vector3 maximum1 = aaboundingBox[i]->GetMaximum();
+				vector3 minimum1 = aaboundingBox[i]->GetMinimum();
 				vector3 newmax1 = static_cast<vector3>(glm::translate(mat1,maximum1) * vector4(0.0f,0.0f,0.0f, 1.0f));
 				vector3 newmin1 = static_cast<vector3>(glm::translate(mat1,minimum1) * vector4(0.0f,0.0f,0.0f, 1.0f));
 
-				matrix4  mat2 = boundingBox[j]->GetModelMatrix();
-				vector3 maximum2 = boundingBox[j]->GetMaximum();
-				vector3 minimum2 = boundingBox[j]->GetMinimum();
+				matrix4  mat2 = aaboundingBox[j]->GetModelMatrix();
+				vector3 maximum2 = aaboundingBox[j]->GetMaximum();
+				vector3 minimum2 = aaboundingBox[j]->GetMinimum();
 				vector3 newmax2 = static_cast<vector3>(glm::translate(mat2,maximum2) * vector4(0.0f,0.0f,0.0f, 1.0f));
 				vector3 newmin2 = static_cast<vector3>(glm::translate(mat2,minimum2) * vector4(0.0f,0.0f,0.0f, 1.0f));
 				/*std::cout<< boundingBox[i]->GetInstanceName() << " Min1: " << newmin1.x << std::endl;
@@ -232,8 +235,8 @@ void BoundingBoxManager::CollisionCheck(void)
 				std::cout<< boundingBox[j]->GetInstanceName() << " Max2: " << newmax2.x << std::endl;*/
 				if((newmax1.y > newmin2.y && newmin1.y < newmax2.y) && (newmax1.z > newmin2.z && newmin1.z < newmax2.z) && (newmax1.x > newmin2.x && newmin1.x < newmax2.x))
 				{
-					bCollidingNames.push_back(boundingBox[i]->GetInstanceName());
-					bCollidingNames.push_back(boundingBox[j]->GetInstanceName());
+					bCollidingNames.push_back(aaboundingBox[i]->GetInstanceName());
+					bCollidingNames.push_back(aaboundingBox[j]->GetInstanceName());
 				}
 			}
 		}
@@ -257,7 +260,10 @@ void BoundingBoxManager::CollisionResponse(void)
 		if(CheckForNameInList(boundingBox[nBox]->GetInstanceName()))
 		{
 			boundingBox[nBox]->SetOBBColor(MERED);
-			aaboundingBox[nBox]->SetOBBColor(MERED);
+		}
+		if(CheckForNameInList(aaboundingBox[nBox]->GetInstanceName()))
+		{
+			aaboundingBox[nBox]->SetOBBColor(MEBLUE);
 		}
 	}
 }
