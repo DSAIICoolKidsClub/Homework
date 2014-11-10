@@ -149,7 +149,7 @@ void BoundingBoxClass::SetModelMatrix(matrix4 theModelMatrix)
 void BoundingBoxClass::SetAAModelMatrix(matrix4 theModelMatrix, std::vector<vector3> other)
 {
 	//Sets the model matrix of the Box
-	modelToWorld = theModelMatrix;
+	//modelToWorld = theModelMatrix;
 	//std::vector<vector3> worldVerts;
 	//int nVertices = static_cast<int>(other.size());
 	//for (int i = 0; i < nVertices; i++)
@@ -160,7 +160,7 @@ void BoundingBoxClass::SetAAModelMatrix(matrix4 theModelMatrix, std::vector<vect
 	CalculateaaBox(other);
 	//Sets the Model Matrix of the actual Box shape
 	//(which is translated m_v3Centrod away from the origin of our Box)
-	mesh->SetModelMatrix(glm::translate(theModelMatrix, centroidOBB)  * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x),glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z))));
+	mesh->SetModelMatrix(glm::translate(modelToWorld, centroidOBB)  * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x),glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z))));
 }
 bool BoundingBoxClass::GetOBBVisible(void) { return visibleOBB; }
 void BoundingBoxClass::SetOBBVisible(bool imVisible) { visibleOBB = imVisible; }
