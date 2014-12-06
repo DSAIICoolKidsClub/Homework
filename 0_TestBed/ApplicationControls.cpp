@@ -1,3 +1,13 @@
+/** Problems:
+	
+	We had some difficulty here during the rotations and translations of AABB
+	If the boxes are created before the shape is moved, the AABB's work fine
+	However, if the shape is rotated, the AABB thinks the rotation is the
+	new world origin and adjusts from there accordingly, meaning the AABBs
+	no longer coincide with the shapes
+
+*/
+
 #include "ApplicationClass.h"
 void ApplicationClass::ProcessKeyboard(void)
 {
@@ -58,7 +68,6 @@ void ApplicationClass::ProcessKeyboard(void)
 #pragma region Model Positioning
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
-		//matrix4 matrix = glm::translate( m_pModelManager->GetModelMatrix(m_sSelectedObject), vector3(-0.1f,0.0f,0.0f));
 		matrix4 matrix = glm::translate( matrix4(1.0f), vector3(-0.1f,0.0f,0.0f)) * m_pModelManager->GetModelMatrix(m_sSelectedObject);
 		matrix4 matrix2 = glm::translate( matrix4(1.0f), vector3(-0.1f,0.0f,0.0f)) * m_pModelManager->GetModelMatrix(m_sSelectedObject);
 		m_pModelManager->SetModelMatrix(matrix, m_sSelectedObject);
@@ -158,7 +167,8 @@ void ApplicationClass::ProcessKeyboard(void)
 			String sInstance = m_pModelManager->GetInstanceName(nInstance);//Create spheres
 			m_pBBMngr->AddBox(sInstance);
 		}
-		m_pBBMngr->SetVisible(true, "ALL");//Make those spheres visible
+		m_pBBMngr->SetOBBVisible(true, "ALL");//Make those OBBs visible
+		m_pBBMngr->SetAABBVisible(true, "ALL");//Make those AABBs visible
 		bWasF6Pressed = false;//reset the flag
 	}
 
@@ -196,16 +206,28 @@ void ApplicationClass::ProcessKeyboard(void)
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::F10))
 	{
 		if(bModifier)
+		{
 			m_pModelManager->SetShowAABB(false);
+			m_pBBMngr->SetAABBVisible(false, "ALL");
+		}
 		else
+		{
 			m_pModelManager->SetShowAABB(true);
+			m_pBBMngr->SetAABBVisible(true, "ALL");
+		}
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::F11))
 	{
 		if(bModifier)
+		{
 			m_pModelManager->SetShowOBB(false);
+			m_pBBMngr->SetOBBVisible(false, "ALL");
+		}
 		else
+		{
 			m_pModelManager->SetShowOBB(true);
+			m_pBBMngr->SetOBBVisible(true, "ALL");
+		}
 	}
 #pragma endregion
 	//Camera

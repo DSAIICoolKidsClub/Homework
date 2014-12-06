@@ -1,7 +1,10 @@
+/**Problems: See Problem zone line 132**/
+
 #include "BoundingBoxManager.h"
 
 BoundingBoxManager* BoundingBoxManager::bInstance = nullptr;
 
+//constructors
 BoundingBoxManager* BoundingBoxManager::GetInstance()
 {
 	if(bInstance == nullptr)
@@ -11,6 +14,7 @@ BoundingBoxManager* BoundingBoxManager::GetInstance()
 	return bInstance;
 }
 
+//releaser
 void BoundingBoxManager::ReleaseInstance()
 {
 	if(bInstance != nullptr)
@@ -19,14 +23,14 @@ void BoundingBoxManager::ReleaseInstance()
 		bInstance = nullptr;
 	}
 }
-
+//Init
 void BoundingBoxManager::Init(void)
 {
 	bModelMngr = ModelManagerClass::GetInstance();
 	bCollidingNames.clear();
 	numBox = 0;
 }
-
+//Further release mmmmmmm....
 void BoundingBoxManager::Release(void)
 {
 	RemoveBox("ALL");
@@ -42,15 +46,15 @@ BoundingBoxManager::~BoundingBoxManager(){Release();};
 int BoundingBoxManager::GetNumberOfBoxes(void){ return numBox; }
 //--- Non Standard Singleton Methods
 
-void BoundingBoxManager::SetVisible(bool a_bVisible, String a_sInstance)
+//set obb visible
+void BoundingBoxManager::SetOBBVisible(bool a_bVisible, String a_sInstance)
 {
 	if(a_sInstance == "ALL")
 	{
 		int nBoxs = GetNumberOfBoxes();
 		for(int nBox = 0; nBox < nBoxs; nBox++)
 		{
-			boundingBox[nBox]->SetOBBVisible(a_bVisible);
-			aaboundingBox[nBox]->SetOBBVisible(a_bVisible);
+			boundingBox[nBox]->SetVisible(a_bVisible);
 		}
 	}
 	else
@@ -58,11 +62,31 @@ void BoundingBoxManager::SetVisible(bool a_bVisible, String a_sInstance)
 		int box = bModelMngr->IdentifyInstance(a_sInstance);
 		if(box < 0 || box < numBox)
 		{
-			boundingBox[box]->SetOBBVisible(a_bVisible);
-			aaboundingBox[box]->SetOBBVisible(a_bVisible);
+			boundingBox[box]->SetVisible(a_bVisible);
 		}
 	}
 }
+//set abb visible
+void BoundingBoxManager::SetAABBVisible(bool a_bVisible, String a_sInstance)
+{
+	if(a_sInstance == "ALL")
+	{
+		int nBoxs = GetNumberOfBoxes();
+		for(int nBox = 0; nBox < nBoxs; nBox++)
+		{
+			aaboundingBox[nBox]->SetVisible(a_bVisible);
+		}
+	}
+	else
+	{
+		int box = bModelMngr->IdentifyInstance(a_sInstance);
+		if(box < 0 || box < numBox)
+		{
+			aaboundingBox[box]->SetVisible(a_bVisible);
+		}
+	}
+}
+//Sets Color of the vectors
 void BoundingBoxManager::SetColor(vector3 a_v3Color, vector3 b_v3Color, String a_sInstance)
 {
 	if(a_sInstance == "ALL")
@@ -70,8 +94,8 @@ void BoundingBoxManager::SetColor(vector3 a_v3Color, vector3 b_v3Color, String a
 		int nBoxs = GetNumberOfBoxes();
 		for(int nBox = 0; nBox < nBoxs; nBox++)
 		{
-			boundingBox[nBox]->SetOBBColor(a_v3Color);
-			aaboundingBox[nBox]->SetOBBColor(b_v3Color);
+			boundingBox[nBox]->SetColor(a_v3Color);
+			aaboundingBox[nBox]->SetColor(b_v3Color);
 		}
 	}
 	else
@@ -79,11 +103,12 @@ void BoundingBoxManager::SetColor(vector3 a_v3Color, vector3 b_v3Color, String a
 		int nBox = bModelMngr->IdentifyInstance(a_sInstance);
 		if(nBox < 0 || nBox < numBox)
 		{
-			boundingBox[nBox]->SetOBBColor(a_v3Color);
-			aaboundingBox[nBox]->SetOBBColor(b_v3Color);
+			boundingBox[nBox]->SetColor(a_v3Color);
+			aaboundingBox[nBox]->SetColor(b_v3Color);
 		}
 	}
 }
+//Sets Model Matrix of OBB
 void BoundingBoxManager::SetModelMatrix(matrix4 a_mModelMatrix, String a_sInstance)
 {
 	if(a_sInstance == "ALL")
@@ -104,6 +129,27 @@ void BoundingBoxManager::SetModelMatrix(matrix4 a_mModelMatrix, String a_sInstan
 	}
 }
 
+/*********** PROBLEM ZONE *****************
+
+This area is where we call the "Set Model Matrix for AABB
+
+The AABB scales correctly based upon the size of the OBB's Rotation
+
+The problem here is that we have to translate the points to the World Matrix
+to find the location of the vertices so the box knows where to draw. When we do this, we
+must eventually transfer back into local position, something that we couldn't figure out
+how to do.
+
+This error causes:
+
+- AABB's being created wherever the box currently is created (they dont move to the center on
+rotation)
+- AABB's translating themselves into their world positions from the local origin, causing
+them to be skewed from the actual origin
+
+**********/
+
+//sets AABB model matrix
 void BoundingBoxManager::SetaaModelMatrix(matrix4 a_mModelMatrix, String a_sInstance)
 {
 	if(a_sInstance == "ALL")
@@ -119,7 +165,7 @@ void BoundingBoxManager::SetaaModelMatrix(matrix4 a_mModelMatrix, String a_sInst
 				vector3 worldVec = static_cast<vector3>(glm::translate(a_mModelMatrix,verts[i]) * vector4(0.0f,0.0f,0.0f, 1.0f));
 				worldVerts.push_back(worldVec);
 			}
-			aaboundingBox[nBox]->SetAAModelMatrix(boundingBox[nBox]->GetModelMatrix(), worldVerts);
+			aaboundingBox[nBox]->SetAAModelMatrix(aaboundingBox[nBox]->GetModelMatrix(), worldVerts);
 		}
 	}
 	else
@@ -135,11 +181,11 @@ void BoundingBoxManager::SetaaModelMatrix(matrix4 a_mModelMatrix, String a_sInst
 				vector3 worldVec = static_cast<vector3>(glm::translate(a_mModelMatrix,verts[i]) * vector4(0.0f,0.0f,0.0f, 1.0f));
 				worldVerts.push_back(worldVec);
 			}
-			aaboundingBox[nBox]->SetAAModelMatrix(boundingBox[nBox]->GetModelMatrix(), worldVerts);
+			aaboundingBox[nBox]->SetAAModelMatrix(aaboundingBox[nBox]->GetModelMatrix(), worldVerts);
 		}
 	}
 }
-
+//Renders the bounding boxes
 void BoundingBoxManager::Render(String a_sInstance)
 {
 	
@@ -162,6 +208,7 @@ void BoundingBoxManager::Render(String a_sInstance)
 		}
 	}
 }
+//Adds the boxes to the list
 void BoundingBoxManager::AddBox(String a_sInstanceName)
 {
 	BoundingBoxClass* oBox = new BoundingBoxClass(a_sInstanceName);
@@ -171,6 +218,7 @@ void BoundingBoxManager::AddBox(String a_sInstanceName)
 
 	numBox ++;
 }
+//removes boxes from the lists
 void BoundingBoxManager::RemoveBox(String a_sInstanceName)
 {
 	if(a_sInstanceName == "ALL")
@@ -213,17 +261,19 @@ void BoundingBoxManager::RemoveBox(String a_sInstanceName)
 	aaboundingBox = aaTemp;
 	numBox++;
 }
+//updates everything
 void BoundingBoxManager::Update(void)
 {
 	bCollidingNames.clear();
 	for(int nBox = 0; nBox < numBox; nBox++)
 	{
-		boundingBox[nBox]->SetOBBColor(MEWHITE);
-		aaboundingBox[nBox]->SetOBBColor(MEGREEN);
+		boundingBox[nBox]->SetColor(MEWHITE);
+		aaboundingBox[nBox]->SetColor(MEGREEN);
 	}
 	CollisionCheck();
 	CollisionResponse();
 }
+//checks collisions between AABBs
 void BoundingBoxManager::CollisionCheck(void)
 {
 	for(int i = 0; i < numBox; i++)
@@ -243,10 +293,6 @@ void BoundingBoxManager::CollisionCheck(void)
 				vector3 minimum2 = aaboundingBox[j]->GetMinimum();
 				vector3 newmax2 = static_cast<vector3>(glm::translate(mat2,maximum2) * vector4(0.0f,0.0f,0.0f, 1.0f));
 				vector3 newmin2 = static_cast<vector3>(glm::translate(mat2,minimum2) * vector4(0.0f,0.0f,0.0f, 1.0f));
-				/*std::cout<< boundingBox[i]->GetInstanceName() << " Min1: " << newmin1.x << std::endl;
-				std::cout<< boundingBox[i]->GetInstanceName() << " Max1: " << newmax1.x << std::endl;
-				std::cout<< boundingBox[j]->GetInstanceName() << " Min2: " << newmin2.x << std::endl;
-				std::cout<< boundingBox[j]->GetInstanceName() << " Max2: " << newmax2.x << std::endl;*/
 				if((newmax1.y > newmin2.y && newmin1.y < newmax2.y) && (newmax1.z > newmin2.z && newmin1.z < newmax2.z) && (newmax1.x > newmin2.x && newmin1.x < newmax2.x))
 				{
 					bCollidingNames.push_back(aaboundingBox[i]->GetInstanceName());
@@ -257,6 +303,7 @@ void BoundingBoxManager::CollisionCheck(void)
 	}
 
 }
+//checks colliding instance names
 bool BoundingBoxManager::CheckForNameInList(String a_sName)
 {
 	int nNames = static_cast<int>(bCollidingNames.size());
@@ -267,17 +314,18 @@ bool BoundingBoxManager::CheckForNameInList(String a_sName)
 	}
 	return false;
 }
+//responds to collisions
 void BoundingBoxManager::CollisionResponse(void)
 {
 	for(int nBox = 0; nBox < numBox; nBox++)
 	{
 		if(CheckForNameInList(boundingBox[nBox]->GetInstanceName()))
 		{
-			boundingBox[nBox]->SetOBBColor(MERED);
+			boundingBox[nBox]->SetColor(MERED);
 		}
 		if(CheckForNameInList(aaboundingBox[nBox]->GetInstanceName()))
 		{
-			aaboundingBox[nBox]->SetOBBColor(MEBLUE);
+			aaboundingBox[nBox]->SetColor(MEBLUE);
 		}
 	}
 }

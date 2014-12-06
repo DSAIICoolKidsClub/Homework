@@ -8,12 +8,9 @@ using namespace MyEngine;
 class BoundingBoxClass
 {
 	String instance;
-	bool visibleOBB;
-	vector3 centroidOBB;
-	vector3 colorOBB;
-	bool visibleAABB;
-	vector3 centroidAABB;
-	vector3 colorAABB;
+	bool visible;
+	vector3 centroid;
+	vector3 color;
 	matrix4 modelToWorld;
 	PrimitiveWireClass* mesh;
 	ModelManagerClass* modelManager;
@@ -29,17 +26,11 @@ public:
 	std::vector<vector3> getVertices();
 	~BoundingBoxClass(void);
 
-	bool GetOBBVisible(void);
-	void SetOBBVisible(bool imVisible);
+	bool GetVisible(void);
+	void SetVisible(bool imVisible);
 	/* Property:
 	GetVisible() or GetVisible()*/
-	__declspec(property(get = GetOBBVisible, put = SetOBBVisible)) bool OBBVisible;
-
-	bool GetAABBVisible(void);
-	void SetAABBVisible(bool imVisible);
-	/* Property:
-	GetVisible() or GetVisible()*/
-	__declspec(property(get = GetAABBVisible, put = SetAABBVisible)) bool AABBVisible;
+	__declspec(property(get = GetVisible, put = SetVisible)) bool Visible;
 
 	/* Gets the name of the model associated with this bounding box from model manager */
 	String GetInstanceName(void);
@@ -52,16 +43,10 @@ public:
 	vector3 GetMaximum(void);
 
 	/* Gets the centroid the bounding box */
-	vector3 GetOBBCentroid(void);
+	vector3 GetCentroid(void);
 	/* Property:
 	GetCentroid()*/
-	__declspec(property(get = GetOBBCentroid)) vector3 OBBCentroid;
-
-	/* Gets the centroid the bounding box */
-	vector3 GetAABBCentroid(void);
-	/* Property:
-	GetCentroid()*/
-	__declspec(property(get = GetAABBCentroid)) vector3 AABBCentroid;
+	__declspec(property(get = GetCentroid)) vector3 Centroid;
 
 	/* Gets the "ModelToWorld" matrix associated with the bounding box */
 	matrix4 GetModelMatrix(void);
@@ -73,20 +58,13 @@ public:
 	__declspec(property(get = GetModelMatrix, put = SetModelMatrix)) matrix4 ModelMatrix;
 
 	/* Gets the color vector of this bounding box (the default color in which is going to be rendered) */
-	vector3 GetOBBColor(void);
+	vector3 GetColor(void);
 	/* Sets the color vector of this bounding box (the default color in which is going to be rendered) */
-	void SetOBBColor(vector3 theColor);
+	void SetColor(vector3 theColor);
 	/* Property:
 	GetColor() or SetColor() */
-	__declspec(property(get = GetOBBColor, put = SetOBBColor)) vector3 OBBColor;
+	__declspec(property(get = GetColor, put = SetColor)) vector3 Color;
 
-	/* Gets the color vector of this bounding box (the default color in which is going to be rendered) */
-	vector3 GetAABBColor(void);
-	/* Sets the color vector of this bounding box (the default color in which is going to be rendered) */
-	void SetAABBColor(vector3 theColor);
-	/* Property:
-	GetColor() or SetColor() */
-	__declspec(property(get = GetAABBColor, put = SetAABBColor)) vector3 AABBColor;
 	/* Renders the bounding box
 		Args:
 			a_vColor -> determinate the color of the sphere to be rendered, if MEDEFAULT

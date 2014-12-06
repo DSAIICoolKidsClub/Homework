@@ -27,7 +27,8 @@ public:
 	Arguments:
 		a_bVisible sets whether the shape will be drawn or not
 		a_sInstanceName identify the shape if ALL is provided then it applies to all shapes*/
-	void SetVisible(bool bVisible, String bInstanceName = "ALL");
+	void SetOBBVisible(bool bVisible, String bInstanceName = "ALL");
+	void SetAABBVisible(bool bVisible, String bInstanceName = "ALL");
 	/*Sets the Color of the specified Instance
 	Arguments:
 		a_v3Color sets the color of the shape to be drawn

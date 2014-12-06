@@ -4,10 +4,10 @@ BoundingBoxClass::BoundingBoxClass(String theInstance)
 {
 	//Initialize variables
 	mesh = nullptr;
-	centroidOBB = vector3(0.0f,0.0f,0.0f);
-	colorOBB = MEWHITE;
+	centroid = vector3(0.0f,0.0f,0.0f);
+	color = MEWHITE;
 	modelToWorld = matrix4(1.0f);
-	visibleOBB = false;
+	visible = false;
 
 	//Get the singleton instance of the Model Manager
 	modelManager = ModelManagerClass::GetInstance();
@@ -26,32 +26,32 @@ BoundingBoxClass::BoundingBoxClass(String theInstance)
 	modelToWorld = modelManager->GetModelMatrix(instance);
 	//Crete a new Box and initialize it using the member variables
 	mesh = new PrimitiveWireClass();
-	mesh->GenerateCube(1, colorOBB);
-	matrix4 final = glm::translate(modelToWorld, centroidOBB) * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x) ,glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
+	mesh->GenerateCube(1, color);
+	matrix4 final = glm::translate(modelToWorld, centroid) * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x) ,glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
 	mesh->SetModelMatrix(final);
 }
 BoundingBoxClass::BoundingBoxClass(BoundingBoxClass const& other)
 {
 	//Initialize the Box using other instance of it
 	instance = other.instance;
-	visibleOBB = other.visibleOBB;
-	centroidOBB = other.centroidOBB;
+	visible = other.visible;
+	centroid = other.centroid;
 	modelToWorld = other.modelToWorld;
 	modelManager = other.modelManager;
 
 	mesh = new PrimitiveWireClass();
-	mesh->GenerateCube(5, colorOBB);
-	matrix4 final = glm::translate(modelToWorld, centroidOBB) * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x) ,glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
+	mesh->GenerateCube(5, color);
+	matrix4 final = glm::translate(modelToWorld, centroid) * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x) ,glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
 	mesh->SetModelMatrix(final);
 }
 
 BoundingBoxClass::BoundingBoxClass(std::vector<vector3> other, String theInstance)
 {
 	mesh = nullptr;
-	centroidOBB = vector3(0.0f,0.0f,0.0f);
-	colorOBB = MEGREEN;
+	centroid = vector3(0.0f,0.0f,0.0f);
+	color = MEGREEN;
 	modelToWorld = matrix4(1.0f);
-	visibleOBB = false;
+	visible = false;
 
 	modelManager = ModelManagerClass::GetInstance();
 	instance = theInstance;
@@ -69,8 +69,8 @@ BoundingBoxClass::BoundingBoxClass(std::vector<vector3> other, String theInstanc
 	modelToWorld = modelManager->GetModelMatrix(instance);
 	//Crete a new Box and initialize it using the member variables
 	mesh = new PrimitiveWireClass();
-	mesh->GenerateCube(1, colorOBB);
-	matrix4 final = glm::translate(modelToWorld, centroidOBB) * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x) ,glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
+	mesh->GenerateCube(1, color);
+	matrix4 final = glm::translate(modelToWorld, centroid) * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x) ,glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
 	mesh->SetModelMatrix(final);
 }
 
@@ -83,14 +83,14 @@ BoundingBoxClass& BoundingBoxClass::operator=(BoundingBoxClass const& other)
 		Release();
 		//Construct the object as in the copy constructor
 		instance = other.instance;
-		visibleOBB = other.visibleOBB;
-		centroidOBB = other.centroidOBB;
+		visible = other.visible;
+		centroid = other.centroid;
 		modelToWorld = other.modelToWorld;
 		modelManager = other.modelManager;
 		
 		mesh = new PrimitiveWireClass();
-		mesh->GenerateCube(5, colorOBB);
-		matrix4 final = glm::translate(modelToWorld, centroidOBB) * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x) ,glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
+		mesh->GenerateCube(5, color);
+		matrix4 final = glm::translate(modelToWorld, centroid) * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x) ,glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z)));
 		mesh->SetModelMatrix(final);
 	}
 	return *this;
@@ -131,12 +131,9 @@ void BoundingBoxClass::Release(void)
 	modelManager = nullptr;
 }
 //Accessors
-vector3 BoundingBoxClass::GetOBBCentroid(void){ return centroidOBB; }
-//vector3 BoundingBoxClass::GetAABBCentroid(void){ return centroidAABB; }
-vector3 BoundingBoxClass::GetOBBColor(void){ return colorOBB; }
-void BoundingBoxClass::SetOBBColor(vector3 theColor){ colorOBB = theColor; }
-//vector3 BoundingBoxClass::GetAABBColor(void){ return colorAABB; }
-//void BoundingBoxClass::SetAABBColor(vector3 theColor){ colorAABB = theColor; }
+vector3 BoundingBoxClass::GetCentroid(void){ return centroid; }
+vector3 BoundingBoxClass::GetColor(void){ return color; }
+void BoundingBoxClass::SetColor(vector3 theColor){ color = theColor; }
 matrix4 BoundingBoxClass::GetModelMatrix(void){ return modelToWorld; }
 void BoundingBoxClass::SetModelMatrix(matrix4 theModelMatrix)
 {
@@ -144,26 +141,19 @@ void BoundingBoxClass::SetModelMatrix(matrix4 theModelMatrix)
 	modelToWorld = theModelMatrix;
 	//Sets the Model Matrix of the actual Box shape
 	//(which is translated m_v3Centrod away from the origin of our Box)
-	mesh->SetModelMatrix(glm::translate(theModelMatrix, centroidOBB) * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x),glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z))));
+	mesh->SetModelMatrix(glm::translate(theModelMatrix, centroid) * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x),glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z))));
 }
 void BoundingBoxClass::SetAAModelMatrix(matrix4 theModelMatrix, std::vector<vector3> other)
 {
 	//Sets the model matrix of the Box
-	//modelToWorld = theModelMatrix;
-	//std::vector<vector3> worldVerts;
-	//int nVertices = static_cast<int>(other.size());
-	//for (int i = 0; i < nVertices; i++)
-	//{
-	//	vector3 worldVec = static_cast<vector3>(glm::translate(modelToWorld,other[i]) * vector4(0.0f,0.0f,0.0f, 1.0f));
-	//	worldVerts.push_back(worldVec);
-	//}
+	modelToWorld = theModelMatrix;
 	CalculateaaBox(other);
 	//Sets the Model Matrix of the actual Box shape
 	//(which is translated m_v3Centrod away from the origin of our Box)
-	mesh->SetModelMatrix(glm::translate(modelToWorld, centroidOBB)  * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x),glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z))));
+	mesh->SetModelMatrix(glm::translate(modelToWorld, centroid)  * glm::scale(matrix4(1.0f),vector3(glm::distance(maximum.x, minimum.x),glm::distance(maximum.y,minimum.y), glm::distance(maximum.z,minimum.z))));
 }
-bool BoundingBoxClass::GetOBBVisible(void) { return visibleOBB; }
-void BoundingBoxClass::SetOBBVisible(bool imVisible) { visibleOBB = imVisible; }
+bool BoundingBoxClass::GetVisible(void) { return visible; }
+void BoundingBoxClass::SetVisible(bool imVisible) { visible = imVisible; }
 String BoundingBoxClass::GetInstanceName(void){ return instance; }
 vector3 BoundingBoxClass::GetMinimum(void){ return minimum; };
 vector3 BoundingBoxClass::GetMaximum(void){ return maximum; };
@@ -215,8 +205,8 @@ void BoundingBoxClass::CalculateBox(String theInstance)
 		}
 	}
 
-	centroidOBB = minimum + maximum;
-	centroidOBB /= 2.0f;
+	centroid = minimum + maximum;
+	centroid /= 2.0f;
 	return;
 }
 
@@ -264,8 +254,8 @@ void BoundingBoxClass::CalculateaaBox(std::vector<vector3> other)
 		}
 	}
 
-	centroidOBB = minimum + maximum;
-	centroidOBB /= 2.0f;
+	centroid = minimum + maximum;
+	centroid /= 2.0f;
 
 	return;
 }
@@ -274,13 +264,13 @@ void BoundingBoxClass::Render( vector3 otherColor )
 {
 	//If the shape is visible render it
 	//otherwise just return
-	if(!visibleOBB)
+	if(!visible)
 		return;
 	//Calculate the color we want the shape to be
 	vector3 vColor;
 	//if the argument was MEDEFAULT just use the color variable in our class
 	if(otherColor == MEDEFAULT)
-		vColor = colorOBB;
+		vColor = color;
 	else //Otherwise use the argument
 		vColor = otherColor;
 
